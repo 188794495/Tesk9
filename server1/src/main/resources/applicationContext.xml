@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:sca="http://www.springframework.org/schema/sca"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/sca http://www.osoa.org/xmlns/sca/1.0/spring-sca.xsd">
+
+
+    <!-- 激活组件扫描功能,在包cn.ysh.studio.spring.aop及其子包下面自动扫描通过注解配置的组件 -->
+
+
+
+
+    <bean id="CookieLocaleResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        <!--<property name="cookieMaxAge" value="604800"></property>-->
+        <property name="defaultLocale" value="zh_CN"></property>
+        <property name="cookieName" value="language"></property>
+    </bean>
+
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+        <property name="acquireIncrement" value="${jdbc.acquireIncrement}"></property>
+        <property name="minPoolSize" value="${jdbc.minPoolSize}"></property>
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+        <property name="driverClass" value="${jdbc.driverClass}"></property>
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+        <property name="user" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+
+    </bean>
+    <!-- spring+mybatis完美结合 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入dataSource -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- mybatis批量别名配置 -->
+        <property name="typeAliasesPackage" value="com.pojo"/>
+        <!--&lt;!&ndash;日志配置 &ndash;&gt;-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <property name="plugins">
+            <array>
+            </array>
+        </property>
+    </bean>
+
+    <!--配置TuscanyServers服务端-->
+    <sca:service name="UserService" type="com.service.UserService" target="UserServiceImpl"/>
+    <bean id="UserServiceImpl" class="com.service.serviceImpl.UserServiceImpl"/>
+
+    <sca:service name="ProfessionService" type="com.service.ProfessionService" target="ProfessionServiceImpl"/>
+    <bean id="ProfessionServiceImpl" class="com.service.serviceImpl.ProfessionServiceImpl"/>
+
+    <sca:service name="StudentService" type="com.service.StudentService" target="StudentServiceImpl"/>
+    <bean id="StudentServiceImpl" class="com.service.serviceImpl.StudentServiceImpl"/>
+
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定需要生成代理的接口所在的包名 -->
+        <property name="basePackage" value="com.mapper"/>
+        <!-- 注意事项：千万不要配置SqlSessionFactory，要配置sqlSessionFactoryBeanName -->
+        <!-- <property name="sqlSessionFactory" ref="sqlSessionFactory"></property> -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+
+    <!-- 加载配置文件 -->
+    <context:property-placeholder location="classpath*:db.properties"/>
+
+    <!--<context:component-scan base-package="com.aspect"/>-->
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- 扫描业务bean -->
+    <context:component-scan base-package="com.service"></context:component-scan>
+
+    <!--<context:component-scan base-package="com.controller"></context:component-scan>-->
+
+
+
+</beans>

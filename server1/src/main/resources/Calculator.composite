@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+           xmlns:tuscany="http://tuscany.apache.org/xmlns/sca/1.1"
+           targetNamespace="http://tuscanyComponent"
+           name="tuscanyComponent">
+
+    <component name="tuscanyComponent">
+
+        <!--该服务的spring配置文件地址-->
+        <implementation.spring location="applicationContext.xml"/>
+        <!-- 绑定服务-->
+        <service name="StudentService">
+            <!--服务的接口-->
+            <interface.java interface="com.service.StudentService"/>
+            <tuscany:binding.rmi uri="rmi://127.0.0.1:8887/StudentService"/>
+        </service>
+        <!-- 绑定服务-->
+        <service name="ProfessionService">
+            <!--服务的接口-->
+            <interface.java interface="com.service.ProfessionService"/>
+            <tuscany:binding.rmi uri="rmi://127.0.0.1:8887/ProfessionService"/>
+        </service>
+        <!-- 绑定服务-->
+        <service name="UserService">
+            <!--服务的接口-->
+            <interface.java interface="com.service.UserService"/>
+            <tuscany:binding.rmi uri="rmi://127.0.0.1:8887/UserService"/>
+        </service>
+
+    </component>
+
+</composite>
